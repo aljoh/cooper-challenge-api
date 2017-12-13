@@ -2,7 +2,7 @@ RSpec.describe Api::V1::PerformanceDataController, type: :request do
   let(:user) { FactoryGirl.create(:user) }
   let(:credentials) { user.create_new_auth_token }
   let(:headers) { { HTTP_ACCEPT: 'application/json' }.merge!(credentials) }
-  #let(:headers_sad) { { HTTP_ACCEPT: 'application/json' } }
+  let(:headers_sad) { { HTTP_ACCEPT: 'application/json' } }
 
   describe 'POST /api/v1/performance_data' do
     it 'creates a data entry' do
@@ -19,12 +19,12 @@ RSpec.describe Api::V1::PerformanceDataController, type: :request do
       expect(user.errors.full_messages).to eq ['User must exist']
     end
 
-    #it 'gives error message if performance data is not saved' do
-      #post '/api/v1/performance_data', params: {
-        #performance_data: { data: { message: 'Average' } }
-      #}, headers: headers_sad
-      #expect(response_json['message']).to eq 'error'
-    #end
+    it 'gives error message if no user is present' do
+      post '/api/v1/performance_data', params: {
+        performance_data: { data: { message: 'Average' } }
+      }, headers: headers_sad
+      expect(response_json["errors"]).to eq ["You need to sign in or sign up before continuing."]
+    end
   end
 
   describe 'GET /api/v1/performance_data' do
