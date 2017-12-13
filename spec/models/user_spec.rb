@@ -5,6 +5,10 @@ RSpec.describe User, type: :model do
     expect(FactoryGirl.create(:user)).to be_valid
   end
 
+  describe 'Relations' do
+    it { is_expected.to have_many :performance_data}
+  end
+
   describe 'Database table' do
     it { is_expected.to have_db_column :id }
     it { is_expected.to have_db_column :provider }
