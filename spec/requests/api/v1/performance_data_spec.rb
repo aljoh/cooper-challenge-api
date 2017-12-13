@@ -1,5 +1,6 @@
 RSpec.describe Api::V1::PerformanceDataController, type: :request do
   let(:user) { FactoryGirl.create(:user) }
+  let(:second_user) { FactoryGirl.create(:user, email: 'random@random.com') }
   let(:credentials) { user.create_new_auth_token }
   let(:headers) { { HTTP_ACCEPT: 'application/json' }.merge!(credentials) }
   let(:headers_sad) { { HTTP_ACCEPT: 'application/json' } }
@@ -30,9 +31,10 @@ RSpec.describe Api::V1::PerformanceDataController, type: :request do
   describe 'GET /api/v1/performance_data' do
     before do
       5.times { user.performance_data.create(data: { message: 'Average' }) }
+      5.times { second_user.performance_data.create(data: { message: 'Excellent' }) }
     end
 
-    it 'returns a collection of performance data' do
+    it 'returns a collection for only current user' do
       get '/api/v1/performance_data', headers: headers
       expect(response_json['entries'].count).to eq 5
     end
